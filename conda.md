@@ -34,7 +34,7 @@ conda create -n env_name python=3.9
 ## activate env
 conda activate env_name
 
-## conda info --invs
+## conda info --envs
 
 ## see install packages
 conda list
