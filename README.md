@@ -42,7 +42,22 @@
   - [4.2 Built in string functions](#42-built-in-string-functions)
     - [4.2.1 string.find()](#421-stringfind)
     - [4.2.2 string.replace](#422-stringreplace)
+    - [4.2.3 string.upper() and string.lower()](#423-stringupper-and-stringlower)
+    - [4.2.4 string.join()](#424-stringjoin)
+    - [4.2.5 string.format()](#425-stringformat)
   - [4.3 Lambda](#43-lambda)
+  - [4.4 Function as argument](#44-function-as-argument)
+    - [4.4.1 map(function, list)](#441-mapfunction-list)
+    - [4.4.2 filter(function, list)](#442-filterfunction-list)
+    - [4.4.3 reduce(function, list)](#443-reducefunction-list)
+- [5. Loops](#5-loops)
+  - [5.1 for loop](#51-for-loop)
+  - [5.2 while loop](#52-while-loop)
+- [6. OOP](#6-oop)
+  - [6.1 Classes](#61-classes)
+    - [6.1.1 Class properties](#611-class-properties)
+    - [6.1.2 Class initializer](#612-class-initializer)
+    - [6.1.3 Class variable vs Instance variable](#613-class-variable-vs-instance-variable)
 
 # 1. Data types
 ## 1.1 Numbers
@@ -382,6 +397,36 @@ print(some_string.find("earth")) # -1
 ```
 
 ### 4.2.2 string.replace
+```
+some_string = "hello world"
+new_string = some_string.replace("hello", "ola")
+```
+
+### 4.2.3 string.upper() and string.lower()
+```
+print("Hello".lower())
+print("hello".upper())
+```
+
+### 4.2.4 string.join()
+
+```
+list = ["a","b","c"]
+print(",".join(list)) # a,b,c
+```
+
+### 4.2.5 string.format()
+```
+some_string = "hello {0}".format("world")
+print(some_string) # "hello world"
+
+some_string = "{} {}".format("hello", "world")
+print(some_string) # "hello world"
+
+some_string = "{first_string} {second_string}".format(first_string = "hello", second_string="world")
+print(some_string) # "hello world"
+```
+
 
 ## 4.3 Lambda
 Lambdas are anonymous functions that RETURNS data
@@ -394,6 +439,140 @@ print(first_input(1, 2)) # 1
 ```
 
 ```
-greet_user = lambda name : print('Hey there,', name)
+greet_user = lambda your_name : print('Hey there,', your_name)
 greet_user("ylin") # prints Hey there, ylin
 ```
+
+## 4.4 Function as argument
+```
+def add(n1, n2):
+  return n1 + n2
+
+def calculate(operation, n1, n2):
+  return operation(n1, n2)
+
+print(calculate(add, 1, 1)) # 2
+```
+
+pass in lambda as the function
+```
+print(calculate(lambda n1, n2 : n1 + n2, 1, 1)) # 2
+```
+
+### 4.4.1 map(function, list)
+creates a *map* object using a function to operate on elements of a iterator and a iterator
+```
+some_list = [1, 1, 1]
+some_map = map(lambda n: n + 1, some_list)
+
+# convert back to list so it can be printed
+print(list(some_map)) # [2, 2, 2]
+```
+
+### 4.4.2 filter(function, list)
+create a *filter* object from a iterator where element satisfies condition in the function
+```
+some_list = [1, 2, 3, 4]
+less_than_3 = filter(lambda n: n < 3, some_list)
+
+print(list(less_than_3)) # [1, 2]
+```
+
+### 4.4.3 reduce(function, list)
+part of functools, but it takes function, and a iterator
+```
+from functools import reduce
+
+some_list = [1, 2, 3, 4]
+sum = reduce(lambda n1, n2: n1 + n2, some_list)
+print(sum) # 10
+```
+
+# 5. Loops
+2 types
+* for
+* while
+
+loops can contain break, continue, pass (same as continue in this case)
+## 5.1 for loop
+can be used with range(start, end, step), range(start, end) where end is not included
+```
+for i in range(0, 10):
+  print(i) 
+
+# 1
+# 2
+# ..
+# 9
+```
+
+```
+some_list = [1, 2, 3, 4]
+for i in range(0, len(some_list)):
+  print(some_list[i])
+
+# 1
+# 2
+# 3
+# 4
+```
+
+## 5.2 while loop
+```
+i = 0
+while i < 50:
+  i += 1
+print(i) # 50
+```
+
+# 6. OOP
+## 6.1 Classes
+class naming convention is UpperCaseCamel
+```
+class MyClass:
+  pass
+
+obj = MyClass()
+```
+### 6.1.1 Class properties
+* class properties are lower_case_snake
+* class properties must be initialized or it will not compile
+* you can assign properties after whether they're defined in the class or not, but only that instance will have that property
+```
+class Foo:
+  bar = None
+
+obj = Foo()
+Foo.bar = "hello world"
+Foo.another_property = "ola world"
+
+print(Foo.bar) # "hello world"
+print(Foo.another_property) # "ola world"
+```
+
+### 6.1.2 Class initializer
+Basically a constructor with a predefined name, and it must take a input called self for intialization.
+```
+class Foo:
+  def __init__(self, bar):
+    self.bar = bar
+
+obj = Foo("hello")
+print(obj.bar) # hello
+```
+
+initializer with operation params
+```
+class Foo:
+  def __init__(self, bar = "hello world"):
+    self.bar = bar
+
+obj = Foo()
+print(obj.bar) # "hello world"
+
+obj = Foo("ola world")
+print(obj.bar) # "ola world"
+```
+
+### 6.1.3 Class variable vs Instance variable
+* Class variables are shared by all class objects and can be modified using any of them. Instance variables are unique
