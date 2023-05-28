@@ -68,7 +68,16 @@
       - [6.3.1.1 private property](#6311-private-property)
       - [6.3.1.2 private method](#6312-private-method)
     - [6.3.2 accessing private in main code](#632-accessing-private-in-main-code)
-  - [6.4 encapsulation](#64-encapsulation)
+  - [6.4 encapsulation and abstraction](#64-encapsulation-and-abstraction)
+    - [6.4.1 properties annotation](#641-properties-annotation)
+  - [6.5 inheritance](#65-inheritance)
+    - [6.5.1 super() function](#651-super-function)
+    - [6.5.2 multiple inheritance](#652-multiple-inheritance)
+  - [6.6 polymorphism](#66-polymorphism)
+    - [6.6.1 polymorphism using just methods](#661-polymorphism-using-just-methods)
+    - [6.6.2 polymorphism using inheritance](#662-polymorphism-using-inheritance)
+    - [6.6.3 method overriding and abstract class](#663-method-overriding-and-abstract-class)
+    - [6.6.3 abstract class](#663-abstract-class)
 
 # 1. Data types
 ## 1.1 Numbers
@@ -752,6 +761,256 @@ obj = Foo(1)
 print(obj._Foo__id) # 1
 ```
 
-## 6.4 encapsulation
+## 6.4 encapsulation and abstraction
 
+getters and setters
+```
+class Foo:
+  def __init__(self, id):
+    self.__id = id
+  
+  def get_id(self):
+    return self.__id
 
+  def set_id(self, id):
+    self.__id = id
+
+obj = Foo(1)
+print(obj.get_id()) # 1
+obj.set_id(2)
+print(obj.get_id()) # 2
+```
+
+### 6.4.1 properties annotation
+Property annotation can be used 
+```
+class Foo:
+  def __init__(self, id):
+    self.__id = id
+  
+  @property
+  def id(self):
+    return self.__id
+
+  @id.setter
+  def id(self, id):
+    self.__id = id
+
+  @id.deleter
+  def id(self):
+    del self.__id
+
+  def print(self):
+    print(self.__id)
+
+obj = Foo(1)
+print(obj.id) # 1
+obj.id = 2
+print(obj.id) # 2
+obj.print() # 2
+```
+
+## 6.5 inheritance
+* By default all python class inherit object class.
+* To inherit a class, just put the parent ClassName in the child class' declaration in brackets
+```
+class ParentClass:
+  def __init__(self)
+    pass
+
+class ChildClass(ParentClass)
+  def __init__(self)
+    pass
+```
+
+practical example
+```
+class Cat:
+  def __init__(self, feet, cry):
+    self.feet = feet
+    self.cry = cry
+
+  def describe_cat(self):
+    print("This cat has {} feet and cry like {}".format(self.feet, self.cry))
+
+class Tiger(Cat):
+  def __init__(self, feet, cry, lethality):
+    Cat.__init__(self, feet, cry)
+    self.lethality = 100
+  
+  def describe_tiger(self):
+    self.describe_cat()
+    print("tiger is {}% lethal".format(self.lethality))
+
+tiger = Tiger(4, "roar", 100)
+tiger.describe_tiger()
+
+# This cat has 4 feet and cry like roar
+# tiger is 100% lethal
+```
+
+### 6.5.1 super() function
+refer to property of the parent object if the child object override it
+
+```
+class Cat:
+  def __init__(self, lethality):
+    self.lethality = lethality
+
+  def print_lethality(self):
+    print(self.lethality)
+
+class Tiger(Cat):
+  def __init__(self, lethality):
+    Cat.__init__(self, lethality)
+
+  def print_lethality(self):
+    print("base lethality is ")
+    super().print_lethality()
+    print("actual lethality is ")
+    print(self.lethality * 100)
+
+tiger = Tiger(1)
+tiger.print_lethality()
+
+# base lethality is 
+# 1
+# actual lethality is 
+# 100
+```
+
+### 6.5.2 multiple inheritance
+python allows for multiple inheritance, as well as diamond
+
+```
+class Matter:
+  def __init__(self):
+    self.particles = 1000
+
+class Human(Matter):
+  def __init__(self):
+    Matter.__init__(self)
+    self.brain = 1
+
+class Machine(Matter):
+  def __init__(self):
+    Matter.__init__(self)
+    self.battery = 1
+  
+class Android(Human, Machine):
+  def __init__(self):
+    Human.__init__(self)
+    Machine.__init__(self)
+
+  def describe(self):
+    print("brain:{}, battery:{}, particles:{}".format(self.brain, self.battery, self.particles))
+
+android1 = Android()
+android1.describe() # brain:1, battery:1, particles:1000
+```
+
+## 6.6 polymorphism
+Can be achieved in 2 ways
+* using methods
+* using inheritance
+
+### 6.6.1 polymorphism using just methods
+python is dynamic, so polymorphism can be achieved just by iterating different things with same method names
+
+```
+class Square:
+  def __init__(self, length):
+    self.length = length
+
+  def print_area(self):
+    print(self.length**2)
+
+class Rectangle:
+  def __init__(self, length, width):
+    self.length = length
+    self.width = width
+  
+  def print_area(self):
+    print(self.length * self.width)
+
+shapes = [Square(2), Rectangle(2, 4)]
+
+for shape in shapes:
+  shape.print_area()
+
+# 4
+# 8
+```
+
+### 6.6.2 polymorphism using inheritance
+this seems kind of redudent since array was going to let you put anything in there anyway and iterate through it like above
+
+```
+class Shape:
+  def __init__(self):
+    pass
+
+  def print_area(self):
+    pass
+
+class Square(Shape):
+  def __init__(self, length):
+    Shape.__init__(self)
+    self.length = length
+  
+  def print_area(self):
+    print(self.length ** 2)
+
+class Rectangle(Shape):
+  def __init__(self, length, width):
+    Shape.__init__(self)
+    self.length = length
+    self.width = width
+
+  def print_area(self):
+    print(self.length * self.width)
+
+shapes = [Square(2), Rectangle(2, 4)]
+
+for shape in shapes:
+  shape.print_area()
+
+# 4
+# 8
+```
+
+### 6.6.3 method overriding and abstract class
+this is the *default* behavior if child class declares same method as parent, unless other languages where override keyword must be used
+
+see above example, where base print_area is overridden
+
+### 6.6.3 abstract class
+above Shape class can be abstract if init function isn't defined like so
+```
+class Shape:
+  def print_area(self):
+    pass
+
+class Square(Shape):
+  def __init__(self, length):
+    self.length = length
+  
+  def print_area(self):
+    print(self.length ** 2)
+
+class Rectangle(Shape):
+  def __init__(self, length, width):
+    self.length = length
+    self.width = width
+
+  def print_area(self):
+    print(self.length * self.width)
+
+shapes = [Square(2), Rectangle(2, 4)]
+
+for shape in shapes:
+  shape.print_area()
+
+# 4
+# 8
+```
