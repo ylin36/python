@@ -11,7 +11,7 @@
     - [1.2.5 string immutability](#125-string-immutability)
     - [1.2.6 string ascii](#126-string-ascii)
     - [1.2.7 string slicing](#127-string-slicing)
-    - [1.2.8 slicing with a step](#128-slicing-with-a-step)
+    - [1.2.8 slicing wgit fth a step](#128-slicing-wgit-fth-a-step)
     - [1.2.9 reverse slicing](#129-reverse-slicing)
     - [1.2.10 partial slicing](#1210-partial-slicing)
   - [1.3 booleans](#13-booleans)
@@ -58,6 +58,17 @@
     - [6.1.1 Class properties](#611-class-properties)
     - [6.1.2 Class initializer](#612-class-initializer)
     - [6.1.3 Class variable vs Instance variable](#613-class-variable-vs-instance-variable)
+  - [6.2 methods](#62-methods)
+    - [6.2.1 instance methods](#621-instance-methods)
+      - [6.2.1.1 overloading method](#6211-overloading-method)
+    - [6.2.2 class method](#622-class-method)
+    - [6.2.3 static method](#623-static-method)
+  - [6.3 access modifiers](#63-access-modifiers)
+    - [6.3.1 private attributes](#631-private-attributes)
+      - [6.3.1.1 private property](#6311-private-property)
+      - [6.3.1.2 private method](#6312-private-method)
+    - [6.3.2 accessing private in main code](#632-accessing-private-in-main-code)
+  - [6.4 encapsulation](#64-encapsulation)
 
 # 1. Data types
 ## 1.1 Numbers
@@ -132,7 +143,7 @@ print(test_string[0:4]) #hell
 print(test_string[1:len(test_string)]) # ello world
 ```
 
-### 1.2.8 slicing with a step
+### 1.2.8 slicing wgit fth a step
 ```
 test_string = "hello world"
 print(test_string[0:7]) # " hello "
@@ -575,4 +586,172 @@ print(obj.bar) # "ola world"
 ```
 
 ### 6.1.3 Class variable vs Instance variable
-* Class variables are shared by all class objects and can be modified using any of them. Instance variables are unique
+* Class variables are shared by all class objects and can be modified using any of them. (kind of like static in C3, but you still access it with the object instance instead of class name). 
+* Instance variables are unique
+* when class variable is reassigned instead of just mutated, it becomes an instance variable for that object
+
+```
+class Foo:
+  bar = []
+
+obj1 = Foo()
+obj2 = Foo()
+obj1.bar.append('hello')
+obj2.bar.append('world')
+
+print(obj1.bar) # hello world
+print(obj2.bar) # hello world
+
+obj1.bar = []
+print(obj1.bar) # []
+print(obj2.bar) # hello world
+```
+
+## 6.2 methods
+3 types
+* instance methods
+* class methods
+* static methods
+
+### 6.2.1 instance methods
+all methods should have self as the first argument. it doesn't have to be called self, but it's a good practice to just use self
+```
+class Foo:
+  def __init__(self, some_value):
+    self.some_var = some_value
+
+  def print_some_var(self):
+    print(self.some_var)
+
+obj = Foo("hello world")
+obj.print_some_var() # hello world
+```
+#### 6.2.1.1 overloading method
+Python methods *cannot* be explicitly overloaded like C#. It can only be implicitly overloaded through *optional* arguments
+```
+class Foo:
+  def __init__(self):
+    pass
+
+  def print(self, var1, var2 = "world"):
+    print("{} {}".format(var1, var2))
+  
+obj = Foo()
+obj.print("hello", "world") # hello world
+obj.print("hello") # hello world
+```
+
+### 6.2.2 class method
+* class methods uses class variables and are accessible using the ClassName instead of the object.
+* uses @classmethod decorator
+* takes cls instead of self as first parameter.
+
+```
+class Foo:
+  bar_class_variable = "bar"
+
+  @classmethod
+  def print_bar(cls):
+    print(cls.bar_class_variable)
+
+Foo.print_bar()
+```
+
+### 6.2.3 static method
+* pass as many args as needed, and use this method to perform any function without interfering with instance or class variables
+* static methods do not know anything about state of the class or the object instance. its' useful for only using its parameters to determine output.
+* uses @staticmethod annotation
+
+```
+class Foo:
+
+  def __init__(self, some_var):
+    self.some_var = some_var
+
+  @staticmethod
+  def print_bar():
+    print("bar")
+
+obj = Foo('hi')
+obj.print_bar() # bar
+Foo.print_bar() # bar
+```
+
+## 6.3 access modifiers
+2 types in python
+* private
+* public (default)
+
+NOTE python does not have protected modifier
+
+By default its all public, so you can override properties of object.
+```
+class Foo:
+  def __init__(self):
+    self.id = 1
+  
+  def print_id(self):
+    print(self.id)
+
+obj = Foo()
+obj.print_id() # 1
+obj.id = 2
+obj.print_id() # 2
+```
+
+
+### 6.3.1 private attributes
+* use double underscore prefix to make it private
+
+#### 6.3.1.1 private property
+```
+class Foo:
+  def __init__(self):
+    self.__id = 1
+  
+  def print_id(self):
+    print(self.__id)
+
+obj = Foo()
+obj.print_id() # 1
+obj.__id = 2 # this actually creates a new public instance property
+obj.print_id() # 1
+print(obj.__id) # 2 Because __id that was assigned is not the same as the private one
+# if we didn't assign __id earlier, then the last print would have caused an exception
+```
+
+#### 6.3.1.2 private method
+```
+class Foo:
+  def __init__(self, id):
+    self.__id = id
+  
+  def __print_id(self):
+    print(self.__id)
+
+  def print_id(self):
+    self.__print_id()
+
+obj = Foo(1)
+obj.print_id() # 1
+obj.__print_id() # AttributeError: 'Foo' object has no attribute '__print_id'
+```
+
+### 6.3.2 accessing private in main code
+It's not common to have private variable in python. They're obfusticated to ensure no mistakes can be made, however they can still be accessed with workarounds
+```
+object._ClassName__property
+```
+
+```
+class Foo:
+  def __init__(self, id):
+    self.__id = id
+
+obj = Foo(1)
+print(obj._Foo__id) # 1
+```
+
+## 6.4 encapsulation
+
+
