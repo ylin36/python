@@ -985,7 +985,7 @@ this is the *default* behavior if child class declares same method as parent, un
 see above example, where base print_area is overridden
 
 ### 6.6.3 abstract class
-above Shape class can be abstract if init function isn't defined like so
+above Shape class can be abstract if init function isn't defined, but it can technically still be called
 ```
 class Shape:
   def print_area(self):
@@ -1013,4 +1013,18 @@ for shape in shapes:
 
 # 4
 # 8
+```
+
+full abstract it
+```
+from abc import ABC,abstractmethod
+
+class Shape(ABC):
+  @abstractmethod
+  def print_area(self):
+    pass
+  
+class Square(Shape):
+  def __init__(self, length)
+    self.length = length
 ```
