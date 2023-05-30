@@ -35,3 +35,8 @@ if __name__=="__main__":
     # if long arg is used, then you cannot reference it by short arg in code. print(args.u) would error
     print(args.username)
 
+
+# group = parser.add_mutually_exclusive_group()
+# group.add_argument("-a", help="option a")
+# group.add_argument("-b", help="option b")
+
