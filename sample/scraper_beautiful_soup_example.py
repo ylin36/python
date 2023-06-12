@@ -16,7 +16,8 @@ def get_all_videos():
     Get all videos
     """
 
-    driver = webdriver.Chrome()
+    # download the chrome driver first and put it in the path location
+    driver = webdriver.Chrome('./chromedriver')
     driver.get(url)
 
     ## using selenium instead of original html
