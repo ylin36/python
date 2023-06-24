@@ -11,3 +11,9 @@ source /e/python_venv/aws/Scripts/activate
 
 python --version
 ```
+
+change interpreter on vscode
+```
+ctrl+shift+p
+python: select interpreter, change the path to the venv's interpreter. it will not always activate, and plugin installs for python will try to look for it in there
+```
